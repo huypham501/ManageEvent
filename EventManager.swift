@@ -34,21 +34,22 @@ class EventManager {
         return false
     }
     
-    public func requestAccess(){
-        eventStore.requestAccess(to: EKEntityType.reminder) {
+    public func requestAccess() -> Bool{
+        print("REQUEST")
+        
+        eventStore.requestAccess(to: EKEntityType.event) {
             (granted, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "Error request access")
-//            } else {
-//                if granted {
-//                    print("Allow")
-//                } else {
-//                    print("Deny")
-//                }
+                
             }
         }
+        
+        return eventStore.accessibilityActivate()
     }
     
-    
+    public func loadCalendar() -> [EKCalendar] {
+        return eventStore.calendars(for: EKEntityType.event)
+    }
 }
 

@@ -11,7 +11,12 @@ import EventKit
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let eventManager : EventManager = EventManager()
-    let tableView : UITableView = UITableView()
+    let tableView : UITableView = {
+        let tableView : UITableView = UITableView()
+//        tableView.backgroundColor = UIColor.white
+        return tableView
+    }()
+    
     var listEvent : [EKCalendar] = [EKCalendar]()
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -20,7 +25,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CustomTableViewCell.id, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CustomTableViewCell.id, for: indexPath) as? CustomTableViewCell else {return UITableViewCell()
+        }
+        
+        cell.configure(event: listEvent[indexPath.row])
         
         return cell
     }
@@ -29,7 +37,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        view.backgroundColor = .red
         
         view.addSubview(tableView)
         
@@ -65,7 +72,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             self.customAlert(title: "Calendar access denied", message: "null temp", preferredStyle: UIAlertController.Style.alert, alertActions: actions, animated: true, completion: nil)
         } else {
-        
+            
             listEvent = eventManager.loadCalendar()
             tableView.reloadData()
         }
@@ -83,29 +90,3 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
 }
-
-class CustomTableViewCell :UITableViewCell {
-    static let id = "CustomTableViewCell"
-    
-    let titleLable : UILabel = {
-        let lable:UILabel = UILabel()
-        return lable
-    }()
-    
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .blue
-        print("HERE1")
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        print("HERE2")
-    }
-}
-

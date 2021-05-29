@@ -20,9 +20,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = listEvent[indexPath.row].title
-    
+        let cell = tableView.dequeueReusableCell(withIdentifier: CustomTableViewCell.id, for: indexPath)
+        
         return cell
     }
     
@@ -33,7 +32,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         view.backgroundColor = .red
         
         view.addSubview(tableView)
-
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -41,7 +40,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
         
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.id)
         
     }
     
@@ -52,58 +51,61 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidAppear(_ xanimated: Bool) {
         
-        let authorStatus = eventManager.checkAuthorization()
+        let authorStatus:Bool = self.eventManager.checkAuthorization()
         
-        // CHECK AUTHOR IF FALSE(.notDetermined, .denied, .retricted) -> REQUEST
+        print("Status author (Checking): \(authorStatus)")
+        
+        // CHECK AUTHOR IF FALSE(.denied) -> ALERT
         if !authorStatus {
-            // REQUEST -> IF REQUESTED AND DENIED -> ALERT
-            if !eventManager.requestAccess() {
-                // ALERT
-                // CREATE ACTION
-                var actions : [UIAlertAction] = []
-                actions.append(UIAlertAction(title: "Done", style: UIAlertAction.Style.default, handler: nil))
-                
-                
-                self.customAlert(title: "Calendar access denied", message: "null temp", preferredStyle: UIAlertController.Style.alert, alertActions: actions, animated: true, completion: nil)
-            }
-        } else {
+            // ALERT
+            // CREATE ACTION
+            var actions : [UIAlertAction] = []
+            actions.append(UIAlertAction(title: "Done", style: UIAlertAction.Style.default, handler: nil))
             
+            
+            self.customAlert(title: "Calendar access denied", message: "null temp", preferredStyle: UIAlertController.Style.alert, alertActions: actions, animated: true, completion: nil)
+        } else {
+        
             listEvent = eventManager.loadCalendar()
             tableView.reloadData()
-            
         }
-        
-        
     }
-
+    
     private func customAlert(title:String, message:String, preferredStyle:UIAlertController.Style, alertActions:[UIAlertAction], animated:BooleanLiteralType, completion:(() -> Void)?){
         let alertController = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
         
         for action in alertActions {
             alertController.addAction(action)
         }
-
-            print("Present alert")
+        
+        print("Present alert")
         present(alertController, animated: true, completion: completion)
     }
-
+    
 }
 
 class CustomTableViewCell :UITableViewCell {
-//
-//    class CustomLable : UILabel {
-//        required init?(coder: NSCoder) {
-//            fatalError("error")
-//        }
-//
-//        init(title:String, textColor:UIColor) {
-//            super.init(coder: NSCoder.init())
-//            self.text = title
-//            self.textColor = textColor
-//        }
-//    }
-//    let titleLable : UILabel = CustomLable(title: <#T##String#>, textColor: <#T##UIColor#>)
-//
-//
+    static let id = "CustomTableViewCell"
+    
+    let titleLable : UILabel = {
+        let lable:UILabel = UILabel()
+        return lable
+    }()
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.backgroundColor = .blue
+        print("HERE1")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        print("HERE2")
+    }
 }
 

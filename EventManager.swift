@@ -20,6 +20,7 @@ class EventManager {
         switch status {
         case .notDetermined:
             print("Not Determined")
+            return requestAccess()
         case .authorized:
             print("Authorized")
             return true
@@ -31,21 +32,31 @@ class EventManager {
             print("Default")
         }
         
+        print("Status checking : \(status)" )
         return false
     }
     
     public func requestAccess() -> Bool{
         print("REQUEST")
         
+        var status:Bool?
+        
+        let mySemaphore : DispatchSemaphore = DispatchSemaphore(value: 0)
+        
         eventStore.requestAccess(to: EKEntityType.event) {
             (granted, error) in
             if error != nil {
                 print(error?.localizedDescription ?? "Error request access")
-                
             }
+            status = granted
+            mySemaphore.signal()
+
         }
+        mySemaphore.wait()
         
-        return eventStore.accessibilityActivate()
+        print("Status request : \(((status) != nil))")
+        
+        return ((status) != nil)
     }
     
     public func loadCalendar() -> [EKCalendar] {

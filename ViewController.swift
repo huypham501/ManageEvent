@@ -13,11 +13,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     let eventManager : EventManager = EventManager()
     let tableView : UITableView = {
         let tableView : UITableView = UITableView()
-//        tableView.backgroundColor = UIColor.white
         return tableView
     }()
     
-    var listEvent : [EKCalendar] = [EKCalendar]()
+    var listEvent : [EKEvent] = [EKEvent]()
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -72,8 +71,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             self.customAlert(title: "Calendar access denied", message: "null temp", preferredStyle: UIAlertController.Style.alert, alertActions: actions, animated: true, completion: nil)
         } else {
+            let dateAWeekFromNow: Date = Calendar.current.date(byAdding: Calendar.Component.weekOfYear, value: 1, to: Date())!
             
-            listEvent = eventManager.loadCalendar()
+            listEvent = eventManager.loadEvent(startDate: Date(), endDate: dateAWeekFromNow)
             tableView.reloadData()
         }
     }

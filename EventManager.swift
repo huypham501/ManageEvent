@@ -59,8 +59,9 @@ class EventManager {
         return ((status) != nil)
     }
     
-    public func loadCalendar() -> [EKCalendar] {
-        return eventStore.calendars(for: EKEntityType.event)
+    public func loadEvent(startDate:Date, endDate:Date) -> [EKEvent] {
+        let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
+        return eventStore.events(matching: predicate)
     }
 }
 

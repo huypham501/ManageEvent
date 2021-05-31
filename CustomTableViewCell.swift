@@ -12,23 +12,33 @@ import EventKit
 class CustomTableViewCell :UITableViewCell {
     static let id = "CustomTableViewCell"
     
-    let titleLable : UILabel = {
-        let lable:UILabel = UILabel()
-        lable.font = UIFont.systemFont(ofSize: 18)
-        lable.textColor = UIColor.black
-        lable.translatesAutoresizingMaskIntoConstraints = false
-        return lable
+    let titleLabel : UILabel = {
+        let label:UILabel = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20)
+        label.textColor = UIColor.black
+        label.backgroundColor = .red
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
-    let endTimeLable : UILabel = {
-        let lable:UILabel = UILabel()
-        lable.font = UIFont.systemFont(ofSize: 10)
-        lable.textColor = UIColor.gray
-        lable.translatesAutoresizingMaskIntoConstraints = false
-        return lable
+    let endTimeLabel : UILabel = {
+        let label:UILabel = UILabel()
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = UIColor.gray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
-    
+    let dotLabel : UILabel = {
+        let label : UILabel = UILabel()
+        label.font = UIFont.systemFont(ofSize: 8)
+        label.text = "●"
+        label.backgroundColor = .blue
+        label.sizeToFit()
+        label.textColor = UIColor.gray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -39,18 +49,23 @@ class CustomTableViewCell :UITableViewCell {
         
         contentView.backgroundColor = .white
         
-        contentView.addSubview(titleLable)
-        contentView.addSubview(endTimeLable)
-        print("HERE1")
+        contentView.addSubview(titleLabel)
+        titleLabel.addSubview(endTimeLabel)
+        titleLabel.addSubview(dotLabel)
+//        print("HERE1")
     }
     
     public func configure(event:EKEvent) {
-        titleLable.text = event.title
+        titleLabel.text = event.title
         
-        print(event.endDate)
-        print(event.startDate)
+//        print(event.endDate)
+//        print(event.startDate)
+//
+        print(event.structuredLocation)
         
-        endTimeLable.text = String(Calendar.current.component(Calendar.Component.hour, from: event.startDate))
+        let minute : String = calMinute(date: event.startDate)
+        
+        endTimeLabel.text = String(Calendar.current.component(Calendar.Component.hour, from: event.startDate)) + ":" + minute
     }
     
     override func layoutSubviews() {
@@ -59,18 +74,44 @@ class CustomTableViewCell :UITableViewCell {
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.gray.cgColor
         self.layer.cornerRadius = 10
+        self.clipsToBounds = true
         
-        titleLable.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        titleLable.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        titleLable.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 20).isActive = true
-        titleLable.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -12).isActive = true
+        titleLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 15).isActive = true
         
-        endTimeLable.topAnchor.constraint(equalTo: titleLable.bottomAnchor).isActive = true
-        endTimeLable.bottomAnchor.constraint(equalTo: endTimeLable.topAnchor, constant: 10).isActive = true
-        endTimeLable.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 20).isActive = true
-        endTimeLable.rightAnchor.constraint(equalTo: endTimeLable.leftAnchor, constant: 40).isActive = true
+        endTimeLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 12).isActive = true
+        endTimeLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 15).isActive = true
         
+        dotLabel.centerYAnchor.constraint(equalTo: endTimeLabel.centerYAnchor).isActive = true
+        dotLabel.leadingAnchor.constraint(equalTo: endTimeLabel.trailingAnchor, constant: 2).isActive = true
+    }
+    
+    public func getArraySubview() -> [UIView] {
+        return self.subviews
+    }
+    
+    public func calHeightSubview(arrayView:[UIView]) -> Int {
+        var res = 0
         
+        for view in arrayView {
+            res += Int(view.frame.height)
+        }
+        
+        return res
+    }
+    
+    private func calMinute(date:Date) -> Int {
+        return Calendar.current.component(Calendar.Component.minute, from: date)
+    }
+    
+    private func calMinute(date:Date) -> String {
+        let minute: Int = calMinute(date: date)
+        
+        if minute < 10 {
+            return "0" + String(minute)
+        }
+        
+        return String(minute)
     }
 }
 

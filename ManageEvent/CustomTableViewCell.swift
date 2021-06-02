@@ -11,6 +11,11 @@ import EventKit
 
 class CustomTableViewCell :UITableViewCell {
     static let id = "CustomTableViewCell"
+
+//    let backView :UIView = {
+//        let view :UIView = UIView(frame: CGRect(x: 0, y: 0, width: , height: 50))
+//        return view
+//    }()
     
     let titleLabel : UILabel = {
         let label:UILabel = UILabel()
@@ -66,6 +71,8 @@ class CustomTableViewCell :UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
+        
         
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.gray.cgColor

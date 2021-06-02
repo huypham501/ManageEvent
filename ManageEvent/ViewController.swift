@@ -11,7 +11,6 @@ import EventKit
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     //  MARK: - INIT VARIABLE
-    let HEIGHT_TABLEVIEW_CELL : Int = 70
     let TEXT_LABLE : String = "Events"
     
     let eventManager : EventManager = EventManager()
@@ -69,8 +68,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
+        
+        tableView.delegate = self
+        tableView.separatorColor = UIColor.clear
+        tableView.dataSource = self
+        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.id)
         
         indicatorView.addSubview(indicator)
         view.addSubview(tableView)
@@ -90,12 +93,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 30).isActive = true
         tableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -30).isActive = true
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        
-        tableView.dataSource = self
-        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.id)
     }
     
     override func viewDidAppear(_ xanimated: Bool) {
@@ -124,10 +121,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.listEvent = self.eventManager.loadEvent(startDate: Date(), endDate: dateAWeekFromNow)
                 
                 DispatchQueue.main.async {
-                    Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false, block: {_ in
+                    Timer.scheduledTimer(withTimeInterval: 0.0, repeats: false, block: {_ in
                         
                         print("HERE2")
                         self.tableView.reloadData()
+                        print("Length : \(self.listEvent.count)")
                         self.endShowSpinner()
                     })
                 }
